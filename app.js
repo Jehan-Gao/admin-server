@@ -5,9 +5,20 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
+// mongodb
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost/blog');
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('mongo connect success!')
+  // 存docsType
+  // require('./utils/create')
+});
 
-const index = require('./routes/index')
+// routers
 const users = require('./routes/users')
+const doscsType = require('./routes/docsType')
 
 // error handler
 onerror(app) 
@@ -47,8 +58,9 @@ app.use(async (ctx, next) => {
 })
 
 // routes
-app.use(index.routes(), index.allowedMethods())
+// app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+app.use(doscsType.routes())
 
 // error-handling
 app.on('error', (err, ctx) => {

@@ -2,6 +2,7 @@ const router = require('koa-router')()
 
 
 router.get('/getUserInfo', function (ctx, next) {
+  console.log(ctx.origin)
   ctx.body = JSON.stringify({
     code: 0, 
     msg: 'success',
