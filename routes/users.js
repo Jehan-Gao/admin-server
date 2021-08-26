@@ -1,22 +1,34 @@
 const router = require('koa-router')()
+const { decodeToken, sendStringify } = require('../utils/index')
+const { findUseInfoById} = require('../controllers/users')
 
 
-router.get('/getUserInfo', function (ctx, next) {
-  console.log(ctx.origin)
-  ctx.body = JSON.stringify({
-    code: 0, 
-    msg: 'success',
-    data: 'this is getUserInfo data'
-  })
+router.get('/getUserInfo', async function (ctx, next) {
+  try {
+    let res = await decodeToken(ctx)
+    if (!res) {
+      ctx.status = 403
+      ctx.body = sendStringify({ msg: 'error', code: 1})
+      return
+    }
+    const { uid } = res
+    const userInfo = await findUseInfoById(uid)
+    if (!userInfo) {
+      ctx.body = sendStringify({
+        code: 1,
+        msg: '没有查找到用户信息'
+      })
+    } else {
+      ctx.body = sendStringify({
+        data: {
+          userName: userInfo.userName,
+          role: userInfo.role
+        }
+      })
+    }
+  } catch (error) {
+    console.log('getUserInfo', error)
+  }
 })
 
-router.post('/saveUserInfo', function (ctx, next) {
-  ctx.status = 500
-  ctx.body = JSON.stringify({
-    code: 1,
-    msg: 'error',
-    data: 'this is saveUserInfo data'
-  })
-})
-
-module.exports = router
+module.exports = router.routes()

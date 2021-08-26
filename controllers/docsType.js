@@ -1,11 +1,8 @@
-const mongoose = require('mongoose')
-
-const schema = mongoose.Schema()
-const model = mongoose.model('docs_types', schema)
+const docsTypeModel = require('../models/docsType')
 
 function findAllDocsType() {
   return new Promise((resolve, reject) => {
-    model.find(function(err, docs) {
+    docsTypeModel.find(function(err, docs) {
       if (err) {
         reject(err)
       }
@@ -15,8 +12,6 @@ function findAllDocsType() {
   })
 }
 
-
 module.exports = {
   findAllDocsType
 }
-
